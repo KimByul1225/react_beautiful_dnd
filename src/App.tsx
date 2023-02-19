@@ -6,14 +6,21 @@ function App() {
   }
   return (
     
-    <DragDropContext onDragEnd={onDragEnd}>
+    <DragDropContext onDragEnd={onDragEnd}> 
       <Droppable droppableId="one">
-        {() => <ul>
+        {(provided) => <ul ref={provided.innerRef} {...provided.droppableProps}>
+          {/* 9, 10, 11 */}
+
             <Draggable draggableId="first" index={0}>
-              {() => <li>111</li>}
+              {(provided) => <li ref={provided.innerRef} {...provided.draggableProps} ><span {...provided.dragHandleProps
+              }>⭐️</span>111</li>}
+              {/* 12, 13, 14 */}
             </Draggable>
+            
             <Draggable draggableId="second" index={1}>
-              {() => <li>aaa</li>}
+              {(provided) => <li ref={provided.innerRef} {...provided.draggableProps} ><span {...provided.dragHandleProps
+              }>⭐️</span>222</li>}
+              {/* 12, 13, 14 */}
             </Draggable>
           </ul>}
       </Droppable>
