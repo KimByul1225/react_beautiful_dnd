@@ -38,8 +38,18 @@ function App() {
 
   const [toDos, setToDos] = useRecoilState(toDoState);
 
-  const onDragEnd = ({destination, source}: DropResult ) => {
+  const onDragEnd = ({draggableId, destination, source }: DropResult ) => {
     //console.log("arg", args);
+    if(!destination) return;
+    setToDos(oldToDos => {
+      //드래그한 해당 대상의 souce.index를 삭제한다.
+      const copyToDos = [...oldToDos];
+      copyToDos.splice(source.index, 1);
+      //destination.index에 드래그한 대상 넣어주기
+      copyToDos.splice(destination?.index, 0, draggableId);
+      
+      return copyToDos
+    })
   };
   return (
     
@@ -49,7 +59,7 @@ function App() {
           <Droppable droppableId="one">
           {(provided) => <Board ref={provided.innerRef} {...provided.droppableProps}>
             {/* 9, 10, 11 */}
-              {toDos.map((toDo, index) => <Draggable key={index} draggableId={toDo} index={index}>
+              {toDos.map((toDo, index) => <Draggable key={toDo} draggableId={toDo} index={index}>
                 {(provided) => <Card ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps
                 } >{toDo}</Card>}
                 {/* 12, 13, 14 */}
