@@ -2,6 +2,7 @@ import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautif
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { toDoState } from "./atoms";
+import DraggableCard from "./Components/DraggableCard";
 
 
 const Wrapper = styled.div`
@@ -25,19 +26,12 @@ const Board = styled.div`
   border-radius: 5px;
   min-height: 200px;
 `
-const Card = styled.div`
-  border-radius: 5px;
-  padding: 10px 10px;
-  background-color: ${(props) => props.theme.cardColor};
-  margin-bottom: 5px;
-`
 
-const toDos = ["a", "b", "c", "d", "e", "f"];
+
+// const toDos = ["a", "b", "c", "d", "e", "f"];
 
 function App() {
-
   const [toDos, setToDos] = useRecoilState(toDoState);
-
   const onDragEnd = ({draggableId, destination, source }: DropResult ) => {
     //console.log("arg", args);
     if(!destination) return;
@@ -47,10 +41,10 @@ function App() {
       copyToDos.splice(source.index, 1);
       //destination.index에 드래그한 대상 넣어주기
       copyToDos.splice(destination?.index, 0, draggableId);
-      
       return copyToDos
     })
   };
+
   return (
     
     <DragDropContext onDragEnd={onDragEnd}> 
@@ -58,12 +52,13 @@ function App() {
         <Boards>
           <Droppable droppableId="one">
           {(provided) => <Board ref={provided.innerRef} {...provided.droppableProps}>
-            {/* 9, 10, 11 */}
-              {toDos.map((toDo, index) => <Draggable key={toDo} draggableId={toDo} index={index}>
-                {(provided) => <Card ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps
-                } >{toDo}</Card>}
-                {/* 12, 13, 14 */}
-              </Draggable>)}
+              {toDos.map((toDo, index) =>(
+                <DraggableCard
+                  key={toDo}
+                  toDo={toDo}
+                  index={index}
+                />
+              ))}
               {provided.placeholder}
             </Board>}
           </Droppable>
