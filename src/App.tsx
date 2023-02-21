@@ -33,9 +33,11 @@ function App() {
     console.log("arg", info);
     const {destination, source, draggableId} = info;
 
+    // 드래그 했다가 다시 제자리에 둘 경우를 위한 방어 코드
+    if(!destination) return;
+
     //같은 보드 내에서 움직임
     if(destination?.droppableId === source.droppableId){
-      
       setToDos((oldToDos) => {
         //atom 객체에서 선택한 ID가 있는 배열을 선택
         const boardCopy = [...oldToDos[source.droppableId]]
@@ -45,8 +47,23 @@ function App() {
         //destination.index에 드래그한 대상 넣어주기
         boardCopy.splice(destination?.index, 0, draggableId);
         return {
+          //atom 객체 전체를 가지고와서 선택한 ID가 있는 배열만 교체
           ...oldToDos,
           [source.droppableId]: boardCopy
+        }
+      })
+    }
+    //다른 보드로 이동
+    if(destination.droppableId !== source.droppableId){
+      setToDos((allBoards) => {
+        const sourceBoard = [...allBoards[source.droppableId]];
+        const targetBoard = [...allBoards[destination.droppableId]];
+        sourceBoard.splice(source.index, 1);
+        targetBoard.splice(destination?.index, 0, draggableId);
+        return{
+          ...allBoards,
+          [source.droppableId]: sourceBoard,
+          [destination.droppableId]: targetBoard
         }
       })
     }
