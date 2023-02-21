@@ -28,18 +28,32 @@ const Boards =styled.div`
 
 function App() {
   const [toDos, setToDos] = useRecoilState(toDoState);
-  const onDragEnd = ({draggableId, destination, source }: DropResult ) => {
-    //console.log("arg", args);
-    if(!destination) return;
-    // setToDos(oldToDos => {
-    //   //드래그한 해당 대상의 souce.index를 삭제한다.
-    //   const copyToDos = [...oldToDos];
-    //   copyToDos.splice(source.index, 1);
-    //   //destination.index에 드래그한 대상 넣어주기
-    //   copyToDos.splice(destination?.index, 0, draggableId);
-    //   return copyToDos
-    // })
+
+  const onDragEnd = ( info: DropResult ) => {
+    console.log("arg", info);
+    const {destination, source, draggableId} = info;
+
+    //같은 보드 내에서 움직임
+    if(destination?.droppableId === source.droppableId){
+      
+      setToDos((oldToDos) => {
+        //atom 객체에서 선택한 ID가 있는 배열을 선택
+        const boardCopy = [...oldToDos[source.droppableId]]
+
+        //드래그한 해당 대상의 souce.index를 삭제한다.
+        boardCopy.splice(source.index, 1);
+        //destination.index에 드래그한 대상 넣어주기
+        boardCopy.splice(destination?.index, 0, draggableId);
+        return {
+          ...oldToDos,
+          [source.droppableId]: boardCopy
+        }
+      })
+    }
+
+    
   };
+
 
   return (
     
