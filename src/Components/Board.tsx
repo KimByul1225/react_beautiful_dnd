@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {Droppable} from "react-beautiful-dnd";
 import DraggableCard from './DraggableCard';
 import styled from 'styled-components';
@@ -37,9 +37,20 @@ interface IBoardProps {
 }
 
 function Board({toDos, boardId}: IBoardProps) {
+    const inputRef = useRef<HTMLInputElement>(null);
+    const onClick = () => {
+        inputRef.current?.focus();
+        setTimeout(() => {inputRef.current?.blur()}, 5000)
+    }
     return (
         <Wrapper>
             <Title>{boardId}</Title>
+            <input 
+                type="text" 
+                placeholder="작성해주세요." 
+                ref={inputRef}
+            />
+            <button onClick={onClick}>입력</button>
             <Droppable droppableId={boardId}>
                 {(provided, snapshot) => (
                 <Area 
