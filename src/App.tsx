@@ -40,12 +40,15 @@ function App() {
     if(destination?.droppableId === source.droppableId){
       setToDos((oldToDos) => {
         //atom 객체에서 선택한 ID가 있는 배열을 선택
-        const boardCopy = [...oldToDos[source.droppableId]]
+        const boardCopy = [...oldToDos[source.droppableId]];
+        
+        //위에서 선택한 ID가 있는 배열 중 source.index번째 object를 다시 가지고 온다
+        const taskObj = boardCopy[source.index];
 
         //드래그한 해당 대상의 souce.index를 삭제한다.
         boardCopy.splice(source.index, 1);
         //destination.index에 드래그한 대상 넣어주기
-        boardCopy.splice(destination?.index, 0, draggableId);
+        boardCopy.splice(destination?.index, 0, taskObj);
         return {
           //atom 객체 전체를 가지고와서 선택한 ID가 있는 배열만 교체
           ...oldToDos,
@@ -57,9 +60,14 @@ function App() {
     if(destination.droppableId !== source.droppableId){
       setToDos((allBoards) => {
         const sourceBoard = [...allBoards[source.droppableId]];
+        
+        //위에서 선택한 ID가 있는 배열 중 source.index번째 object를 다시 가지고 온다
+        const taskObj = sourceBoard[source.index];
+
         const targetBoard = [...allBoards[destination.droppableId]];
+
         sourceBoard.splice(source.index, 1);
-        targetBoard.splice(destination?.index, 0, draggableId);
+        targetBoard.splice(destination?.index, 0, taskObj);
         return{
           ...allBoards,
           [source.droppableId]: sourceBoard,

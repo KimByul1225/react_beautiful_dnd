@@ -2,6 +2,9 @@ import React, { useRef } from 'react';
 import {Droppable} from "react-beautiful-dnd";
 import DraggableCard from './DraggableCard';
 import styled from 'styled-components';
+import { useForm } from 'react-hook-form';
+import { ITodo, toDoState } from '../atoms';
+import { useSetRecoilState } from 'recoil';
 
 const Wrapper = styled.div`
     padding-top: 10px;
@@ -31,26 +34,65 @@ const Area = styled.div<IAreaProps>`
     transition: background-color .3s ease-in-out;
 `
 
+const Form = styled.form`
+    width: 100%;
+    input{
+        width: 100%;
+
+    }
+`;
+
 interface IBoardProps {
-    toDos: string[];
+    toDos: ITodo[];
     boardId: string;
 }
 
+interface IForm{
+    toDo: string
+}
+
 function Board({toDos, boardId}: IBoardProps) {
-    const inputRef = useRef<HTMLInputElement>(null);
-    const onClick = () => {
-        inputRef.current?.focus();
-        setTimeout(() => {inputRef.current?.blur()}, 5000)
+    const setToDos = useSetRecoilState(toDoState);
+    const { register, handleSubmit, setValue, getValues } = useForm< IForm >();
+
+    const onValid = ({toDo}: IForm) => {
+        const newToDo = {
+            id: Date.now(),
+            text: toDo
+        };
+        setToDos(allBoards => {
+            return{
+                ...allBoards,
+                [boardId]: [
+                    ...allBoards[boardId],
+                    newToDo
+                ]
+            }
+        })
+        setValue("toDo", "");
     }
+
+
+
+
+
+
     return (
         <Wrapper>
             <Title>{boardId}</Title>
-            <input 
+            <Form onSubmit={handleSubmit(onValid)}>
+                <input 
+                    {...register("toDo", {required : true})}
+                    type="text"
+                    placeholder={`${boardId}를 적어주세요.`} 
+                />
+                <button>입력</button>
+            </Form>
+            {/* <input 
                 type="text" 
                 placeholder="작성해주세요." 
                 ref={inputRef}
-            />
-            <button onClick={onClick}>입력</button>
+            /> */}
             <Droppable droppableId={boardId}>
                 {(provided, snapshot) => (
                 <Area 
@@ -60,7 +102,7 @@ function Board({toDos, boardId}: IBoardProps) {
                 ref={provided.innerRef} 
                 {...provided.droppableProps}>
                     {toDos.map((toDo, index) => (
-                    <DraggableCard key={toDo} index={index} toDo={toDo} />
+                    <DraggableCard key={toDo.id} index={index} toDoId={toDo.id} toDoText={toDo.text}/>
                     ))}
                     {provided.placeholder}
                 </Area>

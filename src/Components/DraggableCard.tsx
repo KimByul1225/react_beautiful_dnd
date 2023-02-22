@@ -10,20 +10,21 @@ const Card = styled.div<{ isDragging:boolean }>`
     box-shadow: ${(props) => props.isDragging ? "0px 2px 5px  rgba(0,0,0,0.5)" : "none"};
 `
 interface IDraggableCardPropx {
-    toDo: string;
+    toDoId: number;
+    toDoText: string;
     index: number;
 }
 
-function DraggableCard({toDo, index}:IDraggableCardPropx) {
-    console.log("toDo",toDo);
+function DraggableCard({toDoId, toDoText, index}:IDraggableCardPropx) {
+    // console.log("toDo",toDo);
     return (
-        <Draggable key={toDo} draggableId={toDo} index={index}>
+        <Draggable key={toDoId} draggableId={toDoId + ""} index={index}>
             {(provided, snapshot) => (
                 <Card 
                     ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}
                     isDragging={snapshot.isDragging}
                 >
-                    {toDo}
+                    {toDoText}
                 </Card>
             )}
         </Draggable>
